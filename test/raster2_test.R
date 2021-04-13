@@ -12,10 +12,10 @@ help(package="raster2")
 remove.packages(raster2)
 
 library(devtools)
-install_github("ishidamgm/rpackage")
+install_github("ishidamgm/rpackage",force = T)
 library(rpackage)
 help(package="rpackage")
-
+#remove.packages(rpackage)
 hello()
 hello2()
 

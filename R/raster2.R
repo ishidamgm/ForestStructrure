@@ -1,10 +1,9 @@
-# Hello, world!
+# raster2
 #
-# This is an example function named 'hello'
-# which prints 'Hello, world!'.
+# GIS function samples
 #
-# You can learn more about package authoring with RStudio at:
-#
+# Rstudio package
+
 #   http://r-pkgs.had.co.nz/
 #
 # Some useful keyboard shortcuts for package authoring:
@@ -13,9 +12,6 @@
 #   Check Package:             'Cmd + Shift + E'
 #   Test Package:              'Cmd + Shift + T'
 
-hello <- function() {
-  print("Hello, world!")
-}
 
 #' convert image matrix to raster matrix
 #'
