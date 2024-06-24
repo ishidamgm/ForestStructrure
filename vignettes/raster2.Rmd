@@ -1,0 +1,132 @@
+---
+title: "raster2"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{raster2}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+original script "office_LiDar_008_3Dvie.R"
+
+```{r, setup}
+library(raster)
+library(ForestTools)
+library(sf)
+library(magick)
+library(rgl)
+knitr::knit_hooks$set(webgl = hook_webgl)
+library(raster2)
+```
+
+
+```{r,dsm, webgl=TRUE}
+x1<-3780;x2<-4000;y1<--1170;y2<- -950　###   平面直角座標系の位山宿舎の範囲
+xstp <- 0.5 ; ystp <- 0.5　#画素
+
+# #head(dsm) #データの概略を見る
+# apply(dsm,2,range)
+plot3d(dsm,col="green")
+
+```
+
+```{r,dtm, webgl=TRUE}
+
+open3d()
+plot3d(dtm,col="red")
+points3d(dsm,col="green")
+
+
+```
+
+# DTM matrix 
+```{r,matrix, webgl=TRUE}
+x12<-range(dtm$x) ; y12<-range(dtm$y)
+xn<-(diff(x12)/0.5+1) ; yn<-(diff(y12)/0.5+1)
+xn*yn  # total number of pixels
+
+x_axis<-seq(x1+xstp/2,x2-xstp/2,0.5)
+y_axis<-seq(y1+xstp/2,y2-ystp/2,0.5)
+
+m<-matrix(dtm$z,xn)
+m<-m[,nrow(m):1]
+image(x_axis,y_axis,m)
+
+# dtm ####
+open3d()
+surface3d(x_axis,y_axis,m,col="gray")
+
+```
+
+# Color mapping of orthophoto 
+
+```{r, webgl=TRUE}
+
+# load ortho GeoTif ####
+.dir<-system.file("extdata",package="raster2")
+filename <- paste0(.dir,"/07KE0024_office.tif")
+ b<-raster::brick(filename)
+raster::plotRGB(b)
+# 3D graphics ####
+v<-raster::getValues(b)
+rgb_<-v[cellFromXY(b, dsm[,c("x","y")]),]
+rgl::open3d()
+rgl::points3d(dsm,col=rgb(rgb_,maxColorValue = 255))
+```
+
+```{r, webgl=TRUE}
+filename <- paste0(.dir,"/dtm.tif")
+dtm_raster<-raster::raster(filename)
+contour(dtm_raster)
+CHM<-dchm_raster(dsm$x,y=dsm$y,dtm_raster)
+plot(CHM)
+# ForestTools::vwf
+lin <- function(x){x * 0.05 + 0.6}
+ttops <- ForestTools::vwf(CHM = CHM, winFun = lin, minHeight = 2)
+plot(ttops, col = "blue", pch = 20, cex = 0.5, add = TRUE) # plot of ttops
+# Plot crowns
+crowns <- ForestTools::mcws(treetops = ttops, CHM = CHM, minHeight = 1.5)
+plot(crowns, col = sample(rainbow(50), length(unique(crowns[])), replace = TRUE), legend = FALSE, xlab = "", ylab = "", xaxt='n', yaxt = 'n')
+
+tt<-data.frame(ttops,sf::st_coordinates(ttops)) #write.csv(tt,file="Kuraiyama_Office_ttop.csv")
+head(tt)
+#### 地盤高データ追加
+
+Z<-raster::getValues(dtm_raster)[cellFromXY(dtm_raster,tt[,c("X","Y")])]
+tt<-data.frame(tt,Z)
+head(tt)
+####　地盤高水平化
+dchm <- dchm_vector(x=dsm$x,y=dsm$y,dtm_raster)
+rgl::open3d()
+rgl::points3d(dchm[dchm$h <0.5,],col="red")
+rgl::points3d(dchm[dchm$h >= 0.5 & dchm$h <2 ,],col="green")
+rgl::points3d(dchm,col=rgb(rgb_,maxColorValue = 255))
+n<-nrow(tt)
+i<-rep(seq(n),each=2)
+trunk_xyz<-tt[i,c("X","Y","height")]
+trunk_xyz$height[2*seq(n)]<-0
+rgl::segments3d(trunk_xyz)
+
+#####　地盤高　+ dsm + オルソ　+　立木
+
+rgl::open3d()
+h<-dchm$h
+rgl::points3d(dsm[h >= 0.5 & h < 2 ,],col="green")
+rgl::points3d(dsm[h <0.5,],col="magenta")
+rgl::points3d(dsm,col=rgb(rgb_,maxColorValue = 255))
+n<-nrow(tt)
+i<-rep(seq(n),each=2)
+trunk_xyz_dsm<-tt[i,c("X","Y","Z")]
+trunk_xyz_dsm$Z[2*seq(n)]<-tt$Z+tt$height
+rgl::segments3d(trunk_xyz_dsm)
+rgl::points3d(tt$X,tt$Y,tt$Z+tt$height,col="red",size=3)
+```

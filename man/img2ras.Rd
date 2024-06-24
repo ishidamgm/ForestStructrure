@@ -16,5 +16,6 @@ img2ras(m)
 convert image matrix to raster matrix
 }
 \examples{
+
 img2ras(img)
 }

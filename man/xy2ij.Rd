@@ -2,7 +2,7 @@
 % Please edit documentation in R/raster2.R
 \name{xy2ij}
 \alias{xy2ij}
-\title{xy2ij}
+\title{Return  reference number i,j of raster matrix from x, y coordinates}
 \usage{
 xy2ij(x, y, r)
 }
@@ -14,10 +14,10 @@ xy2ij(x, y, r)
 \item{r}{class of raster data}
 }
 \value{
-
+integer matrix of reference number i,j
 }
 \description{
-xy2ij
+Return  reference number i,j of raster matrix from x, y coordinates
 }
 \examples{
 xy2ij(x,y,r)

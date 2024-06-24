@@ -2,21 +2,25 @@
 % Please edit documentation in R/raster2.R
 \name{xy2n}
 \alias{xy2n}
-\title{xy2n
-cell number from x,y}
+\title{Return cell number of raster matrix from x,y coordinates}
 \usage{
 xy2n(x, y, r)
 }
 \arguments{
-\item{r}{}
+\item{x}{coordinates}
+
+\item{y}{coordinates}
+
+\item{r}{class of raster data}
 }
 \value{
-
+integer of cell number
 }
 \description{
-xy2n
-cell number from x,y
+Return cell number of raster matrix from x,y coordinates
 }
 \examples{
+
 xy2n(x,y,r)
+
 }

@@ -7,11 +7,16 @@
 xyz_ext(xyz, ext)
 }
 \arguments{
-\item{ext}{}
+\item{xyz}{matrix of x,y,z coordinates}
+
+\item{ext}{matrix of x,y,z coordinates}
 }
 \value{
 xyz data matrix or data frame
 }
 \description{
 crop xyz data matrix or data frame form extent c(x1,x2,y1,y2)
+}
+\examples{
+xyz_ext(dtm)
 }

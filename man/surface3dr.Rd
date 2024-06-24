@@ -11,14 +11,16 @@ surface3dr(r, ...)
 \item{r}{}
 }
 \value{
-
+No return values, only draw surface3d.
 }
 \description{
 surface3dr
 draw surface 3d from raster data
 }
 \examples{
-r<-raster("07ke013_dchm_NA_filled.tif")
+.dir<-system.file("extdata",package="raster2")
+filename <- paste0(.dir,"/07KE0024_office.tif")
+r<-raster::raster(filename)
 plot(r)
 surface3dr(r,col="green")
 

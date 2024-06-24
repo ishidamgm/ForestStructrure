@@ -15,7 +15,7 @@ dsm_files(
 \item{rect_drow}{}
 }
 \value{
-
+character vector of file names
 }
 \description{
 dsm_files
